@@ -1,28 +1,34 @@
 #!/usr/bin/env node
 /**
- * Build a single customer × principle. Used by Cloudflare Pages (one project
- * per variant) and by `build-all.mjs` locally.
+ * Build a single customer × principle using the engine's astro config.
  *
  * Usage:
- *   node scripts/build-variant.mjs --customer=demo --principle=modern
+ *   node scripts/build-variant.mjs --customer=<slug> --principle=modern
+ *   CUSTOMER_SLUG=<slug> PRINCIPLE=modern node scripts/build-variant.mjs
  *
- * Reads CUSTOMER + PRINCIPLE from CLI flags or env vars and shells out to
- * the principle-specific Astro template.
+ * The astro config (../astro.config.mjs) self-locates the engine via
+ * `import.meta.url` and reads CUSTOMER_SLUG / PRINCIPLE from env, so this
+ * script just sets the env vars and shells out to `astro build` in the
+ * repo where it's invoked from (cwd = customer repo root, or engine repo
+ * root for local dev).
  */
 
 import { spawnSync } from 'node:child_process';
-import { resolve } from 'node:path';
 
 function parseArg(name) {
   const flag = `--${name}=`;
   const arg = process.argv.find((a) => a.startsWith(flag));
-  return arg ? arg.slice(flag.length) : process.env[name.toUpperCase()] ?? null;
+  return arg ? arg.slice(flag.length) : null;
 }
 
-const customer = parseArg('customer');
-const principle = parseArg('principle');
+const customer =
+  parseArg('customer') ?? process.env.CUSTOMER_SLUG ?? process.env.CUSTOMER ?? null;
+const principle = parseArg('principle') ?? process.env.PRINCIPLE ?? null;
+
 if (!customer || !principle) {
-  console.error('usage: build-variant.mjs --customer=<slug> --principle=<modern|classic|minimal>');
+  console.error(
+    'usage: build-variant.mjs --customer=<slug> --principle=<modern|classic|minimal>',
+  );
   process.exit(1);
 }
 if (!['modern', 'classic', 'minimal'].includes(principle)) {
@@ -30,10 +36,13 @@ if (!['modern', 'classic', 'minimal'].includes(principle)) {
   process.exit(1);
 }
 
-const templateDir = resolve(`./templates/${principle}`);
-const r = spawnSync('astro', ['build'], {
-  cwd: templateDir,
-  env: { ...process.env, CUSTOMER: customer, PRINCIPLE: principle },
+const r = spawnSync('npx', ['astro', 'build'], {
+  env: {
+    ...process.env,
+    CUSTOMER_SLUG: customer,
+    CUSTOMER: customer,
+    PRINCIPLE: principle,
+  },
   stdio: 'inherit',
 });
 process.exit(r.status ?? 1);
