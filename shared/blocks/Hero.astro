@@ -1,0 +1,19 @@
+---
+import type { Block, ContentAsset } from '../types';
+interface Props { block: Extract<Block, { type: 'hero' }>; assets: ContentAsset[]; }
+const { block, assets } = Astro.props;
+const image = block.image_ref ? assets.find((a) => a.id === block.image_ref || a.path === block.image_ref) : null;
+---
+<section class="relative overflow-hidden bg-[var(--color-bg,white)] text-[var(--color-fg,black)]">
+  {image && (
+    <img src={image.path} alt={image.alt || block.headline} class="absolute inset-0 w-full h-full object-cover opacity-50" />
+  )}
+  <div class="relative z-10 max-w-5xl mx-auto px-6 py-24 md:py-32">
+    <h1 class="font-[var(--font-primary)] text-4xl md:text-6xl font-bold leading-tight">{block.headline}</h1>
+    {block.subheadline && <p class="mt-4 text-lg md:text-xl opacity-80">{block.subheadline}</p>}
+    {block.body && <p class="mt-6 max-w-2xl">{block.body}</p>}
+    {block.cta_label && block.cta_link && (
+      <a href={block.cta_link} class="inline-block mt-8 rounded-[var(--radius-md,4px)] bg-[var(--color-accent,black)] text-[var(--color-bg,white)] px-6 py-3 font-medium">{block.cta_label}</a>
+    )}
+  </div>
+</section>

@@ -1,0 +1,24 @@
+---
+import type { Block, ContentAsset } from '../types';
+interface Props { block: Extract<Block, { type: 'team_section' }>; assets: ContentAsset[]; }
+const { block, assets } = Astro.props;
+const findImg = (ref?: string) => ref ? assets.find((a) => a.id === ref || a.path === ref) : null;
+---
+<section class="py-16 px-6">
+  <div class="max-w-5xl mx-auto">
+    {block.title && <h2 class="text-3xl font-bold mb-10 text-center">{block.title}</h2>}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {block.members.map((m) => {
+        const img = findImg(m.photo_ref);
+        return (
+          <article class="text-center">
+            {img && <img src={img.path} alt={img.alt || m.name} class="w-32 h-32 mx-auto rounded-full object-cover mb-3" />}
+            <p class="font-semibold">{m.name}</p>
+            <p class="text-sm opacity-70">{m.role}</p>
+            {m.bio && <p class="text-sm mt-2 opacity-90">{m.bio}</p>}
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>

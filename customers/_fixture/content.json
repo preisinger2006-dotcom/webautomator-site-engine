@@ -1,0 +1,82 @@
+{
+  "schema_version": "1.0",
+  "meta": { "vertical": "gastronomy", "subtype": "beisl", "principle": "modern" },
+  "site": {
+    "name": "Beisl Müller",
+    "tagline": "Wiener Wirtshaus mit Tradition seit 1952",
+    "languages": ["de"]
+  },
+  "navigation": [
+    { "label": "Start", "page_id": "home" },
+    { "label": "Speisekarte", "page_id": "menu" },
+    { "label": "Reservieren", "page_id": "reservation" },
+    { "label": "Kontakt", "page_id": "contact" }
+  ],
+  "pages": {
+    "home": {
+      "title": "Willkommen",
+      "meta_description": "Authentische Wiener Küche im Herzen Neubaus",
+      "blocks": [
+        {
+          "type": "hero",
+          "headline": "Wiener Wirtshausküche, ehrlich serviert",
+          "subheadline": "Tagesteller, Schmankerl und ein Glas Hauswein",
+          "cta_label": "Tisch reservieren",
+          "cta_link": "/reservation"
+        },
+        {
+          "type": "about_section",
+          "headline": "Seit 1952",
+          "body": "Drei Generationen, ein Wirtshaus. Wir kochen, was wir selbst gerne essen."
+        }
+      ]
+    },
+    "menu": {
+      "title": "Speisekarte",
+      "blocks": [
+        {
+          "type": "menu_section",
+          "title": "Tagesteller",
+          "categories": [
+            {
+              "name": "Hauptspeisen",
+              "items": [
+                { "name": "Wiener Schnitzel", "price": "€18,90", "description": "Vom Kalb mit Erdäpfelsalat" },
+                { "name": "Tafelspitz", "price": "€21,50", "description": "Mit Apfelkren und Schnittlauchsauce" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "reservation": {
+      "title": "Reservierung",
+      "blocks": [
+        { "type": "booking_widget", "provider": "quandoo", "merchant_id": "fixture-id" }
+      ]
+    },
+    "contact": {
+      "title": "Kontakt",
+      "blocks": [
+        { "type": "contact_info", "phone": "+43 1 555 1234", "email": "info@beisl-mueller.at", "address": "Mariahilfer Straße 123, 1070 Wien" },
+        { "type": "opening_hours", "title": "Öffnungszeiten", "schedule": [
+          { "day": "Mo–Fr", "hours": "11:00–22:00" },
+          { "day": "Sa", "hours": "11:00–23:00" },
+          { "day": "So", "hours": "geschlossen" }
+        ]}
+      ]
+    }
+  },
+  "assets": [],
+  "legal": {
+    "impressum_template": "v3",
+    "dsgvo_template": "v3",
+    "fields": {
+      "company_name": "Beisl Müller GmbH",
+      "address": "Mariahilfer Straße 123, 1070 Wien",
+      "phone": "+43 1 555 1234",
+      "email": "info@beisl-mueller.at",
+      "vat_id": "ATU12345678"
+    }
+  }
+}

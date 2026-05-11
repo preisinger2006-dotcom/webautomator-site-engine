@@ -1,0 +1,23 @@
+{
+  "customer_slug": "_fixture",
+  "principle": "modern",
+  "vertical": "gastronomy",
+  "subtype": "beisl",
+  "design_tokens": {
+    "colors": {
+      "bg": "#0a0a0a",
+      "fg": "#f5f5f5",
+      "accent": "#d97706",
+      "muted": "#171717",
+      "card": "#1a1a1a",
+      "border": "#262626"
+    },
+    "typography": {
+      "primary": "system-ui, -apple-system, 'Helvetica Neue', sans-serif",
+      "secondary": "Georgia, 'Times New Roman', serif"
+    },
+    "spacing": { "sm": "0.5rem", "md": "1rem", "lg": "2rem", "xl": "4rem" },
+    "radius": { "sm": "2px", "md": "6px", "lg": "12px" }
+  },
+  "updated_at": "2026-05-08T00:00:00Z"
+}

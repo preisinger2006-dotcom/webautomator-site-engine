@@ -1,0 +1,51 @@
+---
+import type { ContentJson, MetaJson } from './types';
+import { tokensToCssVars } from './load-customer';
+
+interface Props {
+  content: ContentJson;
+  meta: MetaJson;
+  pageId: string;
+}
+const { content, meta, pageId } = Astro.props;
+const page = content.pages[pageId];
+const lang = content.site.languages[0] ?? 'de';
+const tokenStyles = tokensToCssVars(meta.design_tokens);
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{page.title} — {content.site.name}</title>
+    {page.meta_description && <meta name="description" content={page.meta_description} />}
+    <style set:html={tokenStyles}></style>
+    <style>
+      body { font-family: var(--font-primary, system-ui, sans-serif); margin: 0; }
+      h1, h2, h3 { font-family: var(--font-secondary, var(--font-primary, inherit)); }
+    </style>
+  </head>
+  <body class="bg-[var(--color-bg,white)] text-[var(--color-fg,#111)]">
+    <header class="border-b border-[var(--color-border,#e5e7eb)]">
+      <nav class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a href="/" class="font-semibold text-lg">{content.site.name}</a>
+        <ul class="flex gap-6 text-sm">
+          {content.navigation.map((n) => (
+            <li>
+              <a href={n.external ? n.href : `/${n.page_id === 'home' ? '' : n.page_id}`}>{n.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="border-t border-[var(--color-border,#e5e7eb)] py-8 text-xs opacity-70 text-center">
+      <p>© {new Date().getFullYear()} {content.site.name}</p>
+      <p>
+        <a href="/impressum">Impressum</a> · <a href="/dsgvo">Datenschutz</a>
+      </p>
+    </footer>
+  </body>
+</html>

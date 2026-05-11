@@ -1,0 +1,23 @@
+---
+import type { Block, ContentAsset } from '../types';
+interface Props { block: Extract<Block, { type: 'services_grid' }>; assets: ContentAsset[]; }
+const { block, assets } = Astro.props;
+const findImg = (ref?: string) => ref ? assets.find((a) => a.id === ref || a.path === ref) : null;
+---
+<section class="py-16 px-6">
+  <div class="max-w-6xl mx-auto">
+    {block.title && <h2 class="text-3xl font-bold mb-10 text-center">{block.title}</h2>}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {block.items.map((item) => {
+        const img = findImg(item.image_ref);
+        return (
+          <article class="rounded-[var(--radius-md,8px)] border border-[var(--color-border,#e5e7eb)] p-6 bg-[var(--color-card,white)]">
+            {img && <img src={img.path} alt={img.alt || item.name} class="w-full h-40 object-cover rounded mb-4" />}
+            <h3 class="font-semibold text-lg mb-2">{item.name}</h3>
+            {item.description && <p class="text-sm opacity-80">{item.description}</p>}
+          </article>
+        );
+      })}
+    </div>
+  </div>
+</section>

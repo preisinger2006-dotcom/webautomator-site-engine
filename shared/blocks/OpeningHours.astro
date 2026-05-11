@@ -1,0 +1,18 @@
+---
+import type { Block } from '../types';
+interface Props { block: Extract<Block, { type: 'opening_hours' }>; }
+const { block } = Astro.props;
+---
+<section class="py-12 px-6">
+  <div class="max-w-md mx-auto">
+    {block.title && <h2 class="text-2xl font-bold mb-6 text-center">{block.title}</h2>}
+    <dl class="space-y-1">
+      {block.schedule.map((row) => (
+        <div class="flex justify-between border-b pb-1 text-sm">
+          <dt class="font-medium">{row.day}</dt>
+          <dd class="opacity-80">{row.hours}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

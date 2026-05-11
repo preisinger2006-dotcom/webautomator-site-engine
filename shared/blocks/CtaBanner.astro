@@ -1,0 +1,12 @@
+---
+import type { Block } from '../types';
+interface Props { block: Extract<Block, { type: 'cta_banner' }>; }
+const { block } = Astro.props;
+---
+<section class="py-16 px-6 bg-[var(--color-accent,black)] text-[var(--color-bg,white)]">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-3xl md:text-4xl font-bold mb-4">{block.headline}</h2>
+    {block.body && <p class="opacity-90 mb-8 max-w-2xl mx-auto">{block.body}</p>}
+    <a href={block.button_link} class="inline-block rounded-[var(--radius-md,4px)] bg-[var(--color-bg,white)] text-[var(--color-accent,black)] px-8 py-3 font-medium">{block.button_label}</a>
+  </div>
+</section>

@@ -1,0 +1,36 @@
+---
+import type { Block, ContentAsset } from './types';
+import Hero from './blocks/Hero.astro';
+import ServicesGrid from './blocks/ServicesGrid.astro';
+import BookingWidget from './blocks/BookingWidget.astro';
+import Testimonials from './blocks/Testimonials.astro';
+import AboutSection from './blocks/AboutSection.astro';
+import ContactInfo from './blocks/ContactInfo.astro';
+import Gallery from './blocks/Gallery.astro';
+import TextSection from './blocks/TextSection.astro';
+import MenuSection from './blocks/MenuSection.astro';
+import TeamSection from './blocks/TeamSection.astro';
+import OpeningHours from './blocks/OpeningHours.astro';
+import CtaBanner from './blocks/CtaBanner.astro';
+import LegalPage from './blocks/LegalPage.astro';
+
+interface Props {
+  block: Block;
+  assets: ContentAsset[];
+}
+const { block, assets } = Astro.props;
+---
+
+{block.type === 'hero' && <Hero block={block} assets={assets} />}
+{block.type === 'services_grid' && <ServicesGrid block={block} assets={assets} />}
+{block.type === 'booking_widget' && <BookingWidget block={block} />}
+{block.type === 'testimonials' && <Testimonials block={block} />}
+{block.type === 'about_section' && <AboutSection block={block} assets={assets} />}
+{block.type === 'contact_info' && <ContactInfo block={block} />}
+{block.type === 'gallery' && <Gallery block={block} assets={assets} />}
+{block.type === 'text_section' && <TextSection block={block} />}
+{block.type === 'menu_section' && <MenuSection block={block} assets={assets} />}
+{block.type === 'team_section' && <TeamSection block={block} assets={assets} />}
+{block.type === 'opening_hours' && <OpeningHours block={block} />}
+{block.type === 'cta_banner' && <CtaBanner block={block} />}
+{block.type === 'legal_page' && <LegalPage block={block} />}

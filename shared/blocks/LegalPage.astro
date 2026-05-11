@@ -1,0 +1,42 @@
+---
+import type { Block } from '../types';
+interface Props { block: Extract<Block, { type: 'legal_page' }>; }
+const { block } = Astro.props;
+
+// Legal copy is template-driven (eRecht24 or equivalent) per PRD §16.
+// AI is NOT permitted to author legal text — only to fill in placeholders.
+const TEMPLATES: Record<string, (fields: Record<string, string>) => string> = {
+  impressum: (f) => `
+    <h1>Impressum</h1>
+    <h2>Angaben gemäß § 5 ECG</h2>
+    <p>${f.company_name ?? ''}<br />${f.address ?? ''}<br />${f.country ?? ''}</p>
+    <p><strong>Telefon:</strong> ${f.phone ?? ''}<br /><strong>E-Mail:</strong> ${f.email ?? ''}</p>
+    <h2>Unternehmensgegenstand</h2>
+    <p>${f.business_purpose ?? ''}</p>
+    <h2>Aufsichtsbehörde / Gewerbeordnung</h2>
+    <p>${f.supervisory_authority ?? ''}</p>
+    <h2>UID-Nummer</h2>
+    <p>${f.vat_id ?? ''}</p>
+  `,
+  dsgvo: (f) => `
+    <h1>Datenschutzerklärung</h1>
+    <p>Verantwortlicher: ${f.controller_name ?? ''}, ${f.address ?? ''}.</p>
+    <h2>Erhebung und Verarbeitung personenbezogener Daten</h2>
+    <p>${f.processing_purposes ?? 'Wir verarbeiten personenbezogene Daten ausschließlich im Rahmen der gesetzlichen Bestimmungen.'}</p>
+    <h2>Ihre Rechte</h2>
+    <p>Sie haben jederzeit das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch.</p>
+    <p>Beschwerden richten Sie bitte an die Datenschutzbehörde Österreich.</p>
+  `,
+  cookie_consent: (f) => `
+    <h1>Cookie-Hinweis</h1>
+    <p>Diese Website verwendet ${f.cookie_categories ?? 'technisch notwendige Cookies'} um den Betrieb der Seite zu gewährleisten.</p>
+  `,
+};
+
+const renderer = TEMPLATES[block.page_type];
+const html = renderer ? renderer(block.fields) : '<p>Legal template not available.</p>';
+---
+<article class="max-w-3xl mx-auto px-6 py-16 prose">
+  <Fragment set:html={html} />
+  <p class="text-xs opacity-50 mt-12">Template: {block.template_id}</p>
+</article>

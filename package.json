@@ -1,0 +1,32 @@
+{
+  "name": "@webautomator/site-engine",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Shared Astro engine (templates + shared blocks + build scripts) used by every WebAutomator customer-site repo.",
+  "packageManager": "pnpm@10.33.4",
+  "scripts": {
+    "dev": "CUSTOMER=_fixture PRINCIPLE=modern astro dev",
+    "build": "node scripts/build-all.mjs",
+    "build:variant": "node scripts/build-variant.mjs",
+    "preview": "astro preview"
+  },
+  "exports": {
+    ".": "./shared/load-customer.ts",
+    "./astro.config.mjs": "./astro.config.mjs",
+    "./shared/*": "./shared/*",
+    "./templates/*": "./templates/*",
+    "./scripts/*": "./scripts/*"
+  },
+  "files": [
+    "astro.config.mjs",
+    "shared",
+    "templates",
+    "scripts",
+    "README.md"
+  ],
+  "dependencies": {
+    "astro": "^5.0.0",
+    "@astrojs/tailwind": "^6.0.0",
+    "tailwindcss": "^4.2.1"
+  }
+}

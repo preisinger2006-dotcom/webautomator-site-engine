@@ -1,0 +1,28 @@
+---
+import type { Block } from '../types';
+interface Props { block: Extract<Block, { type: 'booking_widget' }>; }
+const { block } = Astro.props;
+
+const PROVIDER_TEMPLATES: Record<string, string | null> = {
+  quandoo: '<iframe src="https://booking.quandoo.de/{merchant_id}" width="100%" height="640" frameborder="0"></iframe>',
+  resmio: '<iframe src="https://www.resmio.com/{merchant_id}/widget/" width="100%" height="640" frameborder="0"></iframe>',
+  opentable: '<iframe src="https://www.opentable.de/widget/reservation/loader?rid={merchant_id}" width="100%" height="500" frameborder="0"></iframe>',
+  google_reserve: null,
+  doctolib: '<iframe src="https://www.doctolib.de/{merchant_id}" width="100%" height="800" frameborder="0"></iframe>',
+  jameda: '<iframe src="https://www.jameda.de/widgets/booking/{merchant_id}" width="100%" height="700" frameborder="0"></iframe>',
+  calendly: '<div class="calendly-inline-widget" data-url="https://calendly.com/{merchant_id}" style="min-width:320px;height:700px;"></div><script src="https://assets.calendly.com/assets/external/widget.js" async></script>',
+  cal_com: '<iframe src="https://cal.com/{merchant_id}" width="100%" height="700" frameborder="0"></iframe>',
+  simplybook: '<iframe src="https://{merchant_id}.simplybook.it/v2/" width="100%" height="700" frameborder="0"></iframe>',
+};
+
+const tpl = block.embed_code ?? PROVIDER_TEMPLATES[block.provider] ?? null;
+const html = tpl ? tpl.replace(/{merchant_id}/g, encodeURIComponent(block.merchant_id)) : '';
+---
+<section class="py-16 px-6">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="sr-only">Termin buchen</h2>
+    {html ? <Fragment set:html={html} /> : (
+      <p class="text-center opacity-70">Buchung über {block.provider} — Konfiguration unvollständig.</p>
+    )}
+  </div>
+</section>

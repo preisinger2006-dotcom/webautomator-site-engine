@@ -1,0 +1,15 @@
+---
+import type { Block, ContentAsset } from '../types';
+interface Props { block: Extract<Block, { type: 'about_section' }>; assets: ContentAsset[]; }
+const { block, assets } = Astro.props;
+const img = block.image_ref ? assets.find((a) => a.id === block.image_ref || a.path === block.image_ref) : null;
+---
+<section class="py-16 px-6">
+  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+    {img && <img src={img.path} alt={img.alt || block.headline} class="w-full rounded-[var(--radius-md,8px)] object-cover aspect-[4/3]" />}
+    <div>
+      <h2 class="text-3xl font-bold mb-4">{block.headline}</h2>
+      <p class="leading-relaxed opacity-90 whitespace-pre-line">{block.body}</p>
+    </div>
+  </div>
+</section>

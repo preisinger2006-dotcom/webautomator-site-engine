@@ -1,0 +1,25 @@
+---
+import type { Block, ContentAsset } from '../types';
+import Attribution from '../Attribution.astro';
+interface Props { block: Extract<Block, { type: 'gallery' }>; assets: ContentAsset[]; }
+const { block, assets } = Astro.props;
+const items = block.images.map((entry) => {
+  const asset = assets.find((a) => a.id === entry.image_ref || a.path === entry.image_ref);
+  return { entry, asset };
+});
+const hasGooglePhoto = items.some(({ asset }) => asset?.source === 'google_places');
+---
+<section class="py-16 px-6">
+  <div class="max-w-6xl mx-auto">
+    {block.title && <h2 class="text-3xl font-bold mb-8 text-center">{block.title}</h2>}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      {items.map(({ entry, asset }) => (
+        <figure class="aspect-square overflow-hidden rounded-[var(--radius-md,4px)]">
+          <img src={asset?.path ?? entry.image_ref} alt={entry.alt} loading="lazy" class="w-full h-full object-cover" />
+          {entry.caption && <figcaption class="text-xs mt-1 opacity-70">{entry.caption}</figcaption>}
+        </figure>
+      ))}
+    </div>
+    {hasGooglePhoto && <Attribution />}
+  </div>
+</section>

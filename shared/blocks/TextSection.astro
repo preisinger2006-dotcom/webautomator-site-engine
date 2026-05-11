@@ -1,0 +1,11 @@
+---
+import type { Block } from '../types';
+interface Props { block: Extract<Block, { type: 'text_section' }>; }
+const { block } = Astro.props;
+---
+<section class="py-12 px-6">
+  <div class="max-w-3xl mx-auto prose">
+    {block.headline && <h2 class="text-3xl font-bold mb-6">{block.headline}</h2>}
+    <p class="leading-relaxed whitespace-pre-line">{block.body}</p>
+  </div>
+</section>

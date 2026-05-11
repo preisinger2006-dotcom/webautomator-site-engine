@@ -1,0 +1,15 @@
+---
+import type { Block } from '../types';
+interface Props { block: Extract<Block, { type: 'contact_info' }>; }
+const { block } = Astro.props;
+---
+<section class="py-16 px-6">
+  <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+    <address class="not-italic space-y-2">
+      {block.address && <p>{block.address}</p>}
+      {block.phone && <p>📞 <a href={`tel:${block.phone}`} class="hover:underline">{block.phone}</a></p>}
+      {block.email && <p>✉ <a href={`mailto:${block.email}`} class="hover:underline">{block.email}</a></p>}
+    </address>
+    {block.map_embed && <Fragment set:html={block.map_embed} />}
+  </div>
+</section>
