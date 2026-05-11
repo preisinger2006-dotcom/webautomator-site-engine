@@ -3,7 +3,7 @@ import type { Block, ContentAsset } from '../types';
 import Attribution from '../Attribution.astro';
 interface Props { block: Extract<Block, { type: 'gallery' }>; assets: ContentAsset[]; }
 const { block, assets } = Astro.props;
-const items = block.images.map((entry) => {
+const items = (block.images ?? []).map((entry) => {
   const asset = assets.find((a) => a.id === entry.image_ref || a.path === entry.image_ref);
   return { entry, asset };
 });

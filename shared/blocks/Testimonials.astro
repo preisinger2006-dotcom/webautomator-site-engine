@@ -7,7 +7,7 @@ const { block } = Astro.props;
   <div class="max-w-5xl mx-auto">
     {block.title && <h2 class="text-3xl font-bold mb-10 text-center">{block.title}</h2>}
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {block.items.map((t) => (
+      {(block.items ?? []).map((t) => (
         <figure class="rounded-[var(--radius-md,8px)] bg-[var(--color-card,white)] p-6 border border-[var(--color-border,#e5e7eb)]">
           {t.rating !== undefined && (
             <div class="text-yellow-500 text-sm mb-2">{'★'.repeat(Math.round(t.rating))}{'☆'.repeat(5 - Math.round(t.rating))}</div>

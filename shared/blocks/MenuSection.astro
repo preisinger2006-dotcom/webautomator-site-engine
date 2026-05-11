@@ -8,11 +8,11 @@ const findImg = (ref?: string) => ref ? assets.find((a) => a.id === ref || a.pat
   <div class="max-w-4xl mx-auto">
     {block.title && <h2 class="text-3xl font-bold mb-10 text-center">{block.title}</h2>}
     <div class="space-y-10">
-      {block.categories.map((cat) => (
+      {(block.categories ?? []).map((cat) => (
         <div>
           <h3 class="text-xl font-semibold mb-4 border-b pb-2">{cat.name}</h3>
           <ul class="space-y-3">
-            {cat.items.map((item) => {
+            {(cat.items ?? []).map((item) => {
               const img = findImg(item.image_ref);
               return (
                 <li class="flex items-start gap-4">

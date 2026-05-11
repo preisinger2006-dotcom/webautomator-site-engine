@@ -8,7 +8,7 @@ const findImg = (ref?: string) => ref ? assets.find((a) => a.id === ref || a.pat
   <div class="max-w-5xl mx-auto">
     {block.title && <h2 class="text-3xl font-bold mb-10 text-center">{block.title}</h2>}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {block.members.map((m) => {
+      {(block.members ?? []).map((m) => {
         const img = findImg(m.photo_ref);
         return (
           <article class="text-center">
