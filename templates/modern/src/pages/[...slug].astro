@@ -8,11 +8,11 @@ import { loadCustomer } from '../../../../shared/load-customer';
 import Layout from '../../../../shared/Layout.astro';
 import BlockRenderer from '../../../../shared/BlockRenderer.astro';
 
-const customer = process.env.CUSTOMER ?? '_fixture';
+const customer = process.env.CUSTOMER_SLUG ?? process.env.CUSTOMER ?? '_fixture';
 const { content, meta } = loadCustomer(customer);
 
 export async function getStaticPaths() {
-  const customer = process.env.CUSTOMER ?? '_fixture';
+  const customer = process.env.CUSTOMER_SLUG ?? process.env.CUSTOMER ?? '_fixture';
   const { content } = loadCustomer(customer);
   return Object.keys(content.pages).map((pageId) => ({
     params: { slug: pageId === 'home' ? undefined : pageId },
