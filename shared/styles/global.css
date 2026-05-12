@@ -1,0 +1,9 @@
+/*
+ * Tailwind 4 entry. The @tailwindcss/vite plugin (configured in this
+ * package's astro.config.mjs) scans every Astro/HTML file under srcDir
+ * for utility classes and emits the corresponding CSS into the bundle.
+ *
+ * Without this file, Vite has nothing to scan and the build produces zero
+ * Tailwind CSS — pages render with browser defaults only.
+ */
+@import "tailwindcss";
