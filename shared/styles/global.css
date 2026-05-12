@@ -1,9 +1,20 @@
 /*
- * Tailwind 4 entry. The @tailwindcss/vite plugin (configured in this
- * package's astro.config.mjs) scans every Astro/HTML file under srcDir
- * for utility classes and emits the corresponding CSS into the bundle.
+ * Tailwind 4 entry. The @tailwindcss/vite plugin scans imports and emits
+ * the corresponding CSS into the bundle.
  *
- * Without this file, Vite has nothing to scan and the build produces zero
- * Tailwind CSS — pages render with browser defaults only.
+ * IMPORTANT: when this package is consumed as a github dependency from a
+ * customer repo (`node_modules/@webautomator/site-engine/...`), Vite's
+ * default module-graph scanning does NOT reliably crawl into node_modules
+ * for content detection. The result is a CSS bundle that contains only
+ * Tailwind base/theme and zero utilities — pages render with no styling.
+ *
+ * The explicit @source directives below tell Tailwind to scan these paths
+ * regardless of where they live on disk. The relative paths are resolved
+ * from this CSS file's location (`shared/styles/`), so they correctly
+ * point at the engine's own templates and shared components whether the
+ * engine is at the repo root (dev) or in node_modules (production builds).
  */
 @import "tailwindcss";
+@source "../**/*.astro";
+@source "../../templates/**/*.astro";
+@source "../../templates/**/*.ts";
