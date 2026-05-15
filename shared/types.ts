@@ -9,7 +9,7 @@ export type Block =
   | { type: 'hero'; headline: string; subheadline?: string; body?: string; image_ref?: string; cta_label?: string; cta_link?: string }
   | { type: 'services_grid'; title?: string; items: Array<{ name: string; description?: string; icon?: string; image_ref?: string }> }
   | { type: 'booking_widget'; provider: BookingProvider; merchant_id: string; embed_code?: string }
-  | { type: 'testimonials'; title?: string; items: Array<{ name: string; text: string; rating?: number }> }
+  | { type: 'testimonials'; title?: string; items: Array<{ name: string; text: string; rating?: number }>; aggregate_rating?: number; rating_count?: number; source?: 'google_places' }
   | { type: 'about_section'; headline: string; body: string; image_ref?: string }
   | { type: 'contact_info'; phone?: string; email?: string; address?: string; map_embed?: string }
   | { type: 'gallery'; title?: string; images: Array<{ image_ref: string; alt: string; caption?: string }> }
