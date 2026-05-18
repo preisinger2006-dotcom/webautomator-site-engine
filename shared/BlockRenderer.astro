@@ -1,4 +1,19 @@
 ---
+/**
+ * Override-first block resolution (v0.4.0).
+ *
+ * For each block, render the per-customer override at
+ * `customers/{slug}/overrides/blocks/{Pascal}.astro` if one exists for this
+ * block type; otherwise fall back to the engine default component. Overrides
+ * are produced by Webcreator pipeline Step 9b and committed alongside
+ * content.json. Absence of an override is the normal case → engine default.
+ *
+ * `import.meta.glob` with a leading-slash pattern resolves against the Vite
+ * root, which (via astro.config.mjs) is the consuming customer repo root, so
+ * `/customers/*\/overrides/blocks/*.astro` matches the committed overrides at
+ * build time. A customer repo contains exactly one customer dir, so keying
+ * the matches by PascalCase name is unambiguous.
+ */
 import type { Block, ContentAsset } from './types';
 import Hero from './blocks/Hero.astro';
 import ServicesGrid from './blocks/ServicesGrid.astro';
@@ -19,18 +34,43 @@ interface Props {
   assets: ContentAsset[];
 }
 const { block, assets } = Astro.props;
+
+const ENGINE_DEFAULTS: Record<string, unknown> = {
+  hero: Hero,
+  services_grid: ServicesGrid,
+  booking_widget: BookingWidget,
+  testimonials: Testimonials,
+  about_section: AboutSection,
+  contact_info: ContactInfo,
+  gallery: Gallery,
+  text_section: TextSection,
+  menu_section: MenuSection,
+  team_section: TeamSection,
+  opening_hours: OpeningHours,
+  cta_banner: CtaBanner,
+  legal_page: LegalPage,
+};
+
+function pascalCase(blockType: string): string {
+  return blockType
+    .split('_')
+    .map((p) => (p.length === 0 ? p : p[0].toUpperCase() + p.slice(1)))
+    .join('');
+}
+
+const overrideModules = import.meta.glob('/customers/*/overrides/blocks/*.astro', {
+  eager: true,
+});
+const overrideByPascal: Record<string, unknown> = {};
+for (const [path, mod] of Object.entries(overrideModules)) {
+  const m = path.match(/\/overrides\/blocks\/([A-Za-z0-9]+)\.astro$/);
+  if (m) overrideByPascal[m[1]] = (mod as { default: unknown }).default;
+}
+
+const Component =
+  (overrideByPascal[pascalCase(block.type)] as
+    | ((_: unknown) => unknown)
+    | undefined) ?? (ENGINE_DEFAULTS[block.type] as ((_: unknown) => unknown) | undefined);
 ---
 
-{block.type === 'hero' && <Hero block={block} assets={assets} />}
-{block.type === 'services_grid' && <ServicesGrid block={block} assets={assets} />}
-{block.type === 'booking_widget' && <BookingWidget block={block} />}
-{block.type === 'testimonials' && <Testimonials block={block} />}
-{block.type === 'about_section' && <AboutSection block={block} assets={assets} />}
-{block.type === 'contact_info' && <ContactInfo block={block} />}
-{block.type === 'gallery' && <Gallery block={block} assets={assets} />}
-{block.type === 'text_section' && <TextSection block={block} />}
-{block.type === 'menu_section' && <MenuSection block={block} assets={assets} />}
-{block.type === 'team_section' && <TeamSection block={block} assets={assets} />}
-{block.type === 'opening_hours' && <OpeningHours block={block} />}
-{block.type === 'cta_banner' && <CtaBanner block={block} />}
-{block.type === 'legal_page' && <LegalPage block={block} />}
+{Component && <Component block={block} assets={assets} />}

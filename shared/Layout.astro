@@ -12,6 +12,18 @@ const { content, meta, pageId } = Astro.props;
 const page = content.pages[pageId];
 const lang = content.site.languages[0] ?? 'de';
 const tokenStyles = tokensToCssVars(meta.design_tokens);
+
+// Per-variant theme.css (Webcreator pipeline Step 9a). Presence is detected
+// via `import.meta.glob` against the customer repo root; the file itself is
+// served from publicDir (assets/theme.css, dual-written by commitVariant) at
+// `/theme.css`. `?raw` keeps it an opaque string so a malformed theme.css can
+// never crash the build — it is only linked, not parsed here.
+const themeCssGlob = import.meta.glob('/customers/*/overrides/theme.css', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
+const hasThemeCss = Object.keys(themeCssGlob).length > 0;
 ---
 <!doctype html>
 <html lang={lang}>
@@ -25,6 +37,7 @@ const tokenStyles = tokensToCssVars(meta.design_tokens);
       body { font-family: var(--font-primary, system-ui, sans-serif); margin: 0; }
       h1, h2, h3 { font-family: var(--font-secondary, var(--font-primary, inherit)); }
     </style>
+    {hasThemeCss && <link rel="stylesheet" href="/theme.css" />}
   </head>
   <body class="bg-[var(--color-bg,white)] text-[var(--color-fg,#111)]">
     <header class="border-b border-[var(--color-border,#e5e7eb)]">
