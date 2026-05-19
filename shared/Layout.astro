@@ -24,6 +24,14 @@ const themeCssGlob = import.meta.glob('/customers/*/overrides/theme.css', {
   import: 'default',
 });
 const hasThemeCss = Object.keys(themeCssGlob).length > 0;
+
+// Active nav link detection — `/` for the home page, `/{page_id}` otherwise.
+const currentPath = pageId === 'home' ? '/' : `/${pageId}`;
+function navHref(n: { external?: boolean; href?: string; page_id: string }): string {
+  if (n.external && n.href) return n.href;
+  return n.page_id === 'home' ? '/' : `/${n.page_id}`;
+}
+const currentYear = new Date().getFullYear();
 ---
 <!doctype html>
 <html lang={lang}>
@@ -34,32 +42,168 @@ const hasThemeCss = Object.keys(themeCssGlob).length > 0;
     {page.meta_description && <meta name="description" content={page.meta_description} />}
     <style set:html={tokenStyles}></style>
     <style>
-      body { font-family: var(--font-primary, system-ui, sans-serif); margin: 0; }
-      h1, h2, h3 { font-family: var(--font-secondary, var(--font-primary, inherit)); }
+      /* Engine-default typography + shell. Low-specificity so a per-variant
+         theme.css overrides freely; uses the canonical CSS-var contract
+         (see shared/load-customer.ts::tokensToCssVars). */
+      body {
+        font-family: var(--font-primary, system-ui, sans-serif);
+        font-size: var(--font-size-body, 1rem);
+        line-height: var(--line-height-body, 1.6);
+        color: var(--color-fg, #111);
+        background: var(--color-bg, #fff);
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+      }
+      h1, h2, h3, h4 {
+        font-family: var(--font-secondary, var(--font-primary, inherit));
+        font-weight: var(--font-weight-bold, 700);
+      }
+      a { color: inherit; }
+      .layout-header {
+        position: relative;
+        background: var(--color-bg, #fff);
+        border-block-end: 1px solid var(--color-border, #e5e7eb);
+        z-index: 10;
+      }
+      .layout-header__inner {
+        max-width: 80rem;
+        margin-inline: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-5, 24px);
+        padding: var(--space-4, 16px) var(--space-5, 24px);
+      }
+      .layout-header__brand {
+        font-family: var(--font-secondary, var(--font-primary, inherit));
+        font-weight: var(--font-weight-bold, 700);
+        font-size: var(--font-size-h4, 1.25rem);
+        text-decoration: none;
+        color: var(--color-fg, #111);
+        letter-spacing: -0.01em;
+      }
+      .layout-header__brand::before {
+        content: "";
+        display: inline-block;
+        width: 0.5rem;
+        height: 0.5rem;
+        margin-inline-end: 0.5rem;
+        border-radius: var(--radius-full, 9999px);
+        background: var(--color-accent, currentColor);
+        vertical-align: middle;
+      }
+      .layout-header__nav {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        gap: var(--space-5, 24px);
+        font-size: var(--font-size-small, 0.875rem);
+      }
+      .layout-header__nav a {
+        text-decoration: none;
+        color: var(--color-fg, #111);
+        padding-block: var(--space-2, 8px);
+        position: relative;
+        font-weight: 500;
+      }
+      .layout-header__nav a[aria-current="page"] {
+        color: var(--color-accent, currentColor);
+        font-weight: var(--font-weight-bold, 700);
+      }
+      .layout-header__nav a[aria-current="page"]::after {
+        content: "";
+        position: absolute;
+        inset-block-end: -1px;
+        inset-inline: 0;
+        height: 2px;
+        background: var(--color-accent, currentColor);
+      }
+      .layout-footer {
+        background: var(--color-surface, #fafafa);
+        color: var(--color-fg-muted, #6b7280);
+        border-block-start: 1px solid var(--color-border, #e5e7eb);
+        margin-block-start: var(--space-7, 48px);
+      }
+      .layout-footer__inner {
+        max-width: 80rem;
+        margin-inline: auto;
+        padding: var(--space-6, 32px) var(--space-5, 24px);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-5, 24px);
+        font-size: var(--font-size-small, 0.875rem);
+      }
+      @media (min-width: 768px) {
+        .layout-footer__inner {
+          grid-template-columns: minmax(0, 1fr) auto;
+          align-items: center;
+        }
+      }
+      .layout-footer__brand {
+        font-family: var(--font-secondary, var(--font-primary, inherit));
+        font-weight: var(--font-weight-bold, 700);
+        font-size: var(--font-size-body, 1rem);
+        color: var(--color-fg, #111);
+        margin: 0;
+      }
+      .layout-footer__copy {
+        margin: var(--space-1, 4px) 0 0;
+      }
+      .layout-footer__links {
+        display: flex;
+        gap: var(--space-4, 16px);
+        justify-content: flex-start;
+      }
+      @media (min-width: 768px) {
+        .layout-footer__links { justify-content: flex-end; }
+      }
+      .layout-footer__links a {
+        color: var(--color-fg-muted, #6b7280);
+        text-decoration: none;
+        border-block-end: 1px solid transparent;
+        padding-block-end: 1px;
+      }
+      .layout-footer__links a:hover {
+        color: var(--color-accent, currentColor);
+        border-block-end-color: var(--color-accent, currentColor);
+      }
     </style>
     {hasThemeCss && <link rel="stylesheet" href="/theme.css" />}
   </head>
-  <body class="bg-[var(--color-bg,white)] text-[var(--color-fg,#111)]">
-    <header class="border-b border-[var(--color-border,#e5e7eb)]">
-      <nav class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-        <a href="/" class="font-semibold text-lg">{content.site.name}</a>
-        <ul class="flex gap-6 text-sm">
-          {content.navigation.map((n) => (
-            <li>
-              <a href={n.external ? n.href : `/${n.page_id === 'home' ? '' : n.page_id}`}>{n.label}</a>
-            </li>
-          ))}
-        </ul>
-      </nav>
+  <body>
+    <header class="layout-header">
+      <div class="layout-header__inner">
+        <a href="/" class="layout-header__brand">{content.site.name}</a>
+        <nav aria-label="Hauptnavigation">
+          <ul class="layout-header__nav">
+            {content.navigation.map((n) => {
+              const href = navHref(n);
+              const isActive = !n.external && href === currentPath;
+              return (
+                <li>
+                  <a href={href} aria-current={isActive ? 'page' : undefined}>{n.label}</a>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      </div>
     </header>
     <main>
       <slot />
     </main>
-    <footer class="border-t border-[var(--color-border,#e5e7eb)] py-8 text-xs opacity-70 text-center">
-      <p>© {new Date().getFullYear()} {content.site.name}</p>
-      <p>
-        <a href="/impressum">Impressum</a> · <a href="/dsgvo">Datenschutz</a>
-      </p>
+    <footer class="layout-footer">
+      <div class="layout-footer__inner">
+        <div>
+          <p class="layout-footer__brand">{content.site.name}</p>
+          <p class="layout-footer__copy">© {currentYear} · alle Rechte vorbehalten</p>
+        </div>
+        <nav aria-label="Rechtliches" class="layout-footer__links">
+          <a href="/impressum">Impressum</a>
+          <a href="/dsgvo">Datenschutz</a>
+        </nav>
+      </div>
     </footer>
   </body>
 </html>

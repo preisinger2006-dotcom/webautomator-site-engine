@@ -4,21 +4,136 @@ interface Props { block: Extract<Block, { type: 'team_section' }>; assets: Conte
 const { block, assets } = Astro.props;
 const findImg = (ref?: string) => ref ? assets.find((a) => a.id === ref || a.path === ref) : null;
 ---
-<section class="py-16 px-6">
-  <div class="max-w-5xl mx-auto">
-    {block.title && <h2 class="text-3xl font-bold mb-10 text-center">{block.title}</h2>}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<section class="team-default">
+  <div class="team-default__inner">
+    {block.title && (
+      <header class="team-default__header">
+        <p class="team-default__eyebrow">Das Team</p>
+        <h2 class="team-default__title">{block.title}</h2>
+      </header>
+    )}
+    <div class="team-default__grid">
       {(block.members ?? []).map((m) => {
         const img = findImg(m.photo_ref);
         return (
-          <article class="text-center">
-            {img && <img src={img.path} alt={img.alt || m.name} class="w-32 h-32 mx-auto rounded-full object-cover mb-3" />}
-            <p class="font-semibold">{m.name}</p>
-            <p class="text-sm opacity-70">{m.role}</p>
-            {m.bio && <p class="text-sm mt-2 opacity-90">{m.bio}</p>}
+          <article class="team-default__card">
+            <div class="team-default__photo-wrap">
+              {img ? (
+                <img src={img.path} alt={img.alt || m.name} class="team-default__photo" loading="lazy" />
+              ) : (
+                <span class="team-default__photo-placeholder" aria-hidden="true">
+                  {m.name.split(' ').map((p) => p[0]).slice(0, 2).join('')}
+                </span>
+              )}
+            </div>
+            <div class="team-default__body">
+              <p class="team-default__name">{m.name}</p>
+              <p class="team-default__role">{m.role}</p>
+              {m.bio && <p class="team-default__bio">{m.bio}</p>}
+            </div>
           </article>
         );
       })}
     </div>
   </div>
 </section>
+<style>
+  .team-default {
+    background: var(--color-surface);
+    color: var(--color-fg);
+    padding-block: var(--space-7);
+    padding-inline: var(--space-5);
+  }
+  .team-default__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+  }
+  .team-default__header {
+    text-align: center;
+    margin-block-end: var(--space-6);
+  }
+  .team-default__eyebrow {
+    font-size: var(--font-size-small);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2);
+  }
+  .team-default__title {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h2);
+    line-height: var(--line-height-h2);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .team-default__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+  @media (min-width: 640px) {
+    .team-default__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 960px) {
+    .team-default__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .team-default__card {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 160ms ease;
+  }
+  .team-default__card:hover { box-shadow: var(--shadow-md); }
+  .team-default__photo-wrap {
+    aspect-ratio: 4 / 5;
+    background: var(--color-surface);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .team-default__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .team-default__photo-placeholder {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h1);
+    color: var(--color-accent);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.04em;
+  }
+  .team-default__body {
+    padding: var(--space-4) var(--space-5) var(--space-5);
+  }
+  .team-default__name {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h4);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fg);
+    margin: 0;
+    line-height: var(--line-height-h3);
+  }
+  .team-default__role {
+    font-size: var(--font-size-small);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: var(--font-weight-bold);
+    margin: var(--space-1, 4px) 0 0;
+  }
+  .team-default__bio {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    color: var(--color-fg-muted);
+    margin: var(--space-3) 0 0;
+  }
+</style>

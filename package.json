@@ -1,6 +1,6 @@
 {
   "name": "@webautomator/site-engine",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "type": "module",
   "description": "Shared Astro engine (templates + shared blocks + build scripts) used by every WebAutomator customer-site repo.",
   "packageManager": "pnpm@10.33.4",
@@ -9,7 +9,7 @@
     "build": "node scripts/build-all.mjs",
     "build:variant": "node scripts/build-variant.mjs",
     "preview": "astro preview",
-    "test": "node scripts/test-overrides.mjs"
+    "test": "node --experimental-strip-types scripts/test-tokens.mjs && node scripts/test-overrides.mjs"
   },
   "exports": {
     ".": "./shared/load-customer.ts",

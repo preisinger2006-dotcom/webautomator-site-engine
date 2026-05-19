@@ -20,6 +20,30 @@
 @source "../../templates/**/*.ts";
 
 /*
+ * Tailwind 4 @theme — align text-* font-size utilities to the engine-emitted
+ * --font-size-* / --line-height-* variables (see tokensToCssVars in
+ * shared/load-customer.ts, the SOURCE OF TRUTH). Tailwind 4 reads the
+ * --text-{name} namespace inside @theme to generate text-{name} utilities,
+ * so `text-h1` etc. now resolve to the per-customer Step-4 typography.
+ *
+ * The values reference the :root vars rather than inlining defaults — that
+ * way a customer's design_tokens drive every text-* utility class without
+ * needing a rebuild of the Tailwind theme.
+ */
+@theme {
+  --text-h1: var(--font-size-h1);
+  --text-h1--line-height: var(--line-height-h1);
+  --text-h2: var(--font-size-h2);
+  --text-h2--line-height: var(--line-height-h2);
+  --text-h3: var(--font-size-h3);
+  --text-h3--line-height: var(--line-height-h3);
+  --text-h4: var(--font-size-h4);
+  --text-body: var(--font-size-body);
+  --text-body--line-height: var(--line-height-body);
+  --text-small: var(--font-size-small);
+}
+
+/*
  * Engine self-defense (v0.4.1). Low-priority @layer base so an intentional
  * theme.css (loaded after, outside any layer) still wins — but the shell
  * stays usable if a theme is silent or rejected. Pairs with the Step-9a
@@ -28,5 +52,18 @@
 @layer base {
   header { background-color: var(--color-bg, #ffffff); }
   main > section[class^="block-"],
-  main > section[class*=" block-"] { scroll-margin-top: 2rem; }
+  main > section[class*=" block-"] {
+    scroll-margin-top: 2rem;
+    /* Block sections render edge-to-edge — each engine-default block
+       manages its own inner max-width and padding via the --space-*
+       contract, so theme.css can override per-block without fighting
+       a global section padding. */
+  }
+  /* Engine-default focus ring uses the accent token so keyboard users
+     get a visible outline against any palette. theme.css may override. */
+  :where(a, button):focus-visible {
+    outline: 2px solid var(--color-accent, currentColor);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm, 2px);
+  }
 }

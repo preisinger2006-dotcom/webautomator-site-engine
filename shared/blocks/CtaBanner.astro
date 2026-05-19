@@ -3,10 +3,92 @@ import type { Block } from '../types';
 interface Props { block: Extract<Block, { type: 'cta_banner' }>; }
 const { block } = Astro.props;
 ---
-<section class="py-16 px-6 bg-[var(--color-accent,black)] text-[var(--color-bg,white)]">
-  <div class="max-w-4xl mx-auto text-center">
-    <h2 class="text-3xl md:text-4xl font-bold mb-4">{block.headline}</h2>
-    {block.body && <p class="opacity-90 mb-8 max-w-2xl mx-auto">{block.body}</p>}
-    <a href={block.button_link} class="inline-block rounded-[var(--radius-md,4px)] bg-[var(--color-bg,white)] text-[var(--color-accent,black)] px-8 py-3 font-medium">{block.button_label}</a>
+<section class="cta-default">
+  <div class="cta-default__inner">
+    <div class="cta-default__text">
+      <h2 class="cta-default__headline">{block.headline}</h2>
+      {block.body && <p class="cta-default__body">{block.body}</p>}
+    </div>
+    <a href={block.button_link} class="cta-default__button">
+      <span class="cta-default__button-label">{block.button_label}</span>
+      <span class="cta-default__button-arrow" aria-hidden="true">→</span>
+    </a>
   </div>
 </section>
+<style>
+  /* Side-by-side, not centered-stack: the CTA copy sits left of the
+     button so the button reads as a destination, not a decoration. */
+  .cta-default {
+    background: var(--color-accent);
+    color: var(--color-bg);
+    padding-block: var(--space-6);
+    padding-inline: var(--space-5);
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-default::after {
+    content: "";
+    position: absolute;
+    inset-block-end: -25%;
+    inset-inline-end: -10%;
+    width: 50%;
+    height: 200%;
+    background: radial-gradient(closest-side, var(--color-bg) 0%, transparent 70%);
+    opacity: 0.08;
+    pointer-events: none;
+  }
+  .cta-default__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: center;
+    position: relative;
+  }
+  @media (min-width: 768px) {
+    .cta-default__inner {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: var(--space-6);
+    }
+  }
+  .cta-default__headline {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h2);
+    line-height: var(--line-height-h2);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .cta-default__body {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    margin: var(--space-3) 0 0;
+    opacity: 0.9;
+    max-width: 38rem;
+  }
+  .cta-default__button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--color-bg);
+    color: var(--color-accent);
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-full);
+    font-weight: var(--font-weight-bold);
+    text-decoration: none;
+    box-shadow: var(--shadow-md);
+    transition: transform 120ms ease, box-shadow 120ms ease;
+    justify-self: start;
+  }
+  .cta-default__button:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+  }
+  .cta-default__button-arrow {
+    transition: transform 120ms ease;
+  }
+  .cta-default__button:hover .cta-default__button-arrow {
+    transform: translateX(2px);
+  }
+</style>

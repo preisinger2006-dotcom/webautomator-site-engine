@@ -4,12 +4,88 @@ interface Props { block: Extract<Block, { type: 'about_section' }>; assets: Cont
 const { block, assets } = Astro.props;
 const img = block.image_ref ? assets.find((a) => a.id === block.image_ref || a.path === block.image_ref) : null;
 ---
-<section class="py-16 px-6">
-  <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-    {img && <img src={img.path} alt={img.alt || block.headline} class="w-full rounded-[var(--radius-md,8px)] object-cover aspect-[4/3]" />}
-    <div>
-      <h2 class="text-3xl font-bold mb-4">{block.headline}</h2>
-      <p class="leading-relaxed opacity-90 whitespace-pre-line">{block.body}</p>
+<section class="about-default">
+  <div class="about-default__inner">
+    {img && (
+      <figure class="about-default__figure">
+        <img src={img.path} alt={img.alt || block.headline} class="about-default__img" loading="lazy" />
+      </figure>
+    )}
+    <div class="about-default__text">
+      <p class="about-default__eyebrow">Über uns</p>
+      <h2 class="about-default__headline">{block.headline}</h2>
+      <p class="about-default__body">{block.body}</p>
     </div>
   </div>
 </section>
+<style>
+  /* Asymmetric: figure on the left, slightly oversized and dropped a few
+     spaces below the type baseline; text column is narrower so the eye
+     lands on the headline first. Two compositional axes (vertical figure
+     anchor + horizontal text baseline) keep this distinct from Hero. */
+  .about-default {
+    background: var(--color-surface);
+    color: var(--color-fg);
+    padding-block: var(--space-7);
+    padding-inline: var(--space-5);
+  }
+  .about-default__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+  @media (min-width: 768px) {
+    .about-default__inner {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--space-7);
+    }
+    .about-default__figure {
+      transform: translateY(var(--space-4));
+    }
+    .about-default__text {
+      padding-block-start: var(--space-3);
+    }
+  }
+  .about-default__figure {
+    margin: 0;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    background: var(--color-bg);
+  }
+  .about-default__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .about-default__eyebrow {
+    font-size: var(--font-size-small);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-3);
+  }
+  .about-default__headline {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h2);
+    line-height: var(--line-height-h2);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fg);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .about-default__body {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    color: var(--color-fg);
+    white-space: pre-line;
+    max-width: 38rem;
+    margin-block-start: var(--space-4);
+  }
+</style>

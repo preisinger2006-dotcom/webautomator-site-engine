@@ -4,20 +4,136 @@ interface Props { block: Extract<Block, { type: 'services_grid' }>; assets: Cont
 const { block, assets } = Astro.props;
 const findImg = (ref?: string) => ref ? assets.find((a) => a.id === ref || a.path === ref) : null;
 ---
-<section class="py-16 px-6">
-  <div class="max-w-6xl mx-auto">
-    {block.title && <h2 class="text-3xl font-bold mb-10 text-center">{block.title}</h2>}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<section class="services-default">
+  <div class="services-default__inner">
+    {block.title && (
+      <header class="services-default__header">
+        <p class="services-default__eyebrow">Leistungen</p>
+        <h2 class="services-default__title">{block.title}</h2>
+      </header>
+    )}
+    <div class="services-default__grid">
       {(block.items ?? []).map((item) => {
         const img = findImg(item.image_ref);
         return (
-          <article class="rounded-[var(--radius-md,8px)] border border-[var(--color-border,#e5e7eb)] p-6 bg-[var(--color-card,white)]">
-            {img && <img src={img.path} alt={img.alt || item.name} class="w-full h-40 object-cover rounded mb-4" />}
-            <h3 class="font-semibold text-lg mb-2">{item.name}</h3>
-            {item.description && <p class="text-sm opacity-80">{item.description}</p>}
+          <article class="services-default__card">
+            {img && (
+              <div class="services-default__card-figure">
+                <img src={img.path} alt={img.alt || item.name} class="services-default__card-img" loading="lazy" />
+              </div>
+            )}
+            {!img && item.icon && (
+              <div class="services-default__card-icon" aria-hidden="true">{item.icon}</div>
+            )}
+            <h3 class="services-default__card-name">{item.name}</h3>
+            {item.description && <p class="services-default__card-desc">{item.description}</p>}
           </article>
         );
       })}
     </div>
   </div>
 </section>
+<style>
+  .services-default {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    padding-block: var(--space-7);
+    padding-inline: var(--space-5);
+  }
+  .services-default__inner {
+    max-width: 80rem;
+    margin-inline: auto;
+  }
+  .services-default__header {
+    text-align: center;
+    margin-block-end: var(--space-6);
+  }
+  .services-default__eyebrow {
+    font-size: var(--font-size-small);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2);
+  }
+  .services-default__title {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h2);
+    line-height: var(--line-height-h2);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .services-default__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+  }
+  @media (min-width: 640px) {
+    .services-default__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 960px) {
+    .services-default__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .services-default__card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+    transition: transform 160ms ease, box-shadow 160ms ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .services-default__card::before {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    height: var(--space-1, 4px);
+    background: var(--color-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease;
+  }
+  .services-default__card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .services-default__card:hover::before {
+    transform: scaleX(1);
+  }
+  .services-default__card-figure {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    margin-block-end: var(--space-4);
+    background: var(--color-bg);
+  }
+  .services-default__card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .services-default__card-icon {
+    font-size: var(--font-size-h2);
+    color: var(--color-accent);
+    line-height: 1;
+    margin-block-end: var(--space-4);
+  }
+  .services-default__card-name {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-h3);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2);
+    color: var(--color-fg);
+  }
+  .services-default__card-desc {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    color: var(--color-fg-muted);
+    margin: 0;
+  }
+</style>

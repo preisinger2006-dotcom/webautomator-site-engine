@@ -3,9 +3,47 @@ import type { Block } from '../types';
 interface Props { block: Extract<Block, { type: 'text_section' }>; }
 const { block } = Astro.props;
 ---
-<section class="py-12 px-6">
-  <div class="max-w-3xl mx-auto prose">
-    {block.headline && <h2 class="text-3xl font-bold mb-6">{block.headline}</h2>}
-    <p class="leading-relaxed whitespace-pre-line">{block.body}</p>
+<section class="text-default">
+  <div class="text-default__inner">
+    {block.headline && <h2 class="text-default__headline">{block.headline}</h2>}
+    <p class="text-default__body">{block.body}</p>
   </div>
 </section>
+<style>
+  .text-default {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    padding-block: var(--space-6);
+    padding-inline: var(--space-5);
+  }
+  .text-default__inner {
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+  .text-default__headline {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h2);
+    line-height: var(--line-height-h2);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-5);
+    letter-spacing: -0.01em;
+    position: relative;
+    padding-inline-start: var(--space-4);
+  }
+  .text-default__headline::before {
+    content: "";
+    position: absolute;
+    inset-block: var(--space-1, 4px);
+    inset-inline-start: 0;
+    width: 3px;
+    background: var(--color-accent);
+    border-radius: var(--radius-sm);
+  }
+  .text-default__body {
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    white-space: pre-line;
+    margin: 0;
+    color: var(--color-fg);
+  }
+</style>

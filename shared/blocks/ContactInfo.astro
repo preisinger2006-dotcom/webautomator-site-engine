@@ -3,13 +3,114 @@ import type { Block } from '../types';
 interface Props { block: Extract<Block, { type: 'contact_info' }>; }
 const { block } = Astro.props;
 ---
-<section class="py-16 px-6">
-  <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-    <address class="not-italic space-y-2">
-      {block.address && <p>{block.address}</p>}
-      {block.phone && <p>📞 <a href={`tel:${block.phone}`} class="hover:underline">{block.phone}</a></p>}
-      {block.email && <p>✉ <a href={`mailto:${block.email}`} class="hover:underline">{block.email}</a></p>}
-    </address>
-    {block.map_embed && <Fragment set:html={block.map_embed} />}
+<section class="contact-default">
+  <div class="contact-default__inner">
+    <div class="contact-default__col">
+      <p class="contact-default__eyebrow">Kontakt</p>
+      <h2 class="contact-default__title">So erreichen Sie uns</h2>
+      <address class="contact-default__address">
+        {block.address && (
+          <p class="contact-default__row">
+            <span class="contact-default__icon" aria-hidden="true">⌖</span>
+            <span class="contact-default__value">{block.address}</span>
+          </p>
+        )}
+        {block.phone && (
+          <p class="contact-default__row">
+            <span class="contact-default__icon" aria-hidden="true">☎</span>
+            <a href={`tel:${block.phone}`} class="contact-default__value contact-default__link">{block.phone}</a>
+          </p>
+        )}
+        {block.email && (
+          <p class="contact-default__row">
+            <span class="contact-default__icon" aria-hidden="true">✉</span>
+            <a href={`mailto:${block.email}`} class="contact-default__value contact-default__link">{block.email}</a>
+          </p>
+        )}
+      </address>
+    </div>
+    {block.map_embed && (
+      <div class="contact-default__map">
+        <Fragment set:html={block.map_embed} />
+      </div>
+    )}
   </div>
 </section>
+<style>
+  .contact-default {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    padding-block: var(--space-7);
+    padding-inline: var(--space-5);
+  }
+  .contact-default__inner {
+    max-width: 72rem;
+    margin-inline: auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+    align-items: start;
+  }
+  @media (min-width: 768px) {
+    .contact-default__inner {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 6fr);
+      gap: var(--space-7);
+    }
+  }
+  .contact-default__eyebrow {
+    font-size: var(--font-size-small);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2);
+  }
+  .contact-default__title {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h2);
+    line-height: var(--line-height-h2);
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-5);
+    letter-spacing: -0.01em;
+  }
+  .contact-default__address {
+    font-style: normal;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .contact-default__row {
+    display: grid;
+    grid-template-columns: var(--space-5) 1fr;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0;
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+  }
+  .contact-default__icon {
+    color: var(--color-accent);
+    font-size: var(--font-size-h4);
+    text-align: center;
+  }
+  .contact-default__link {
+    color: var(--color-fg);
+    text-decoration: none;
+    border-block-end: 1px solid var(--color-border);
+    transition: border-color 120ms ease;
+  }
+  .contact-default__link:hover { border-color: var(--color-accent); }
+  .contact-default__map {
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    background: var(--color-surface);
+  }
+  .contact-default__map :global(iframe),
+  .contact-default__map :global(.map-embed) {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+</style>

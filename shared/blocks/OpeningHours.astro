@@ -3,16 +3,77 @@ import type { Block } from '../types';
 interface Props { block: Extract<Block, { type: 'opening_hours' }>; }
 const { block } = Astro.props;
 ---
-<section class="py-12 px-6">
-  <div class="max-w-md mx-auto">
-    {block.title && <h2 class="text-2xl font-bold mb-6 text-center">{block.title}</h2>}
-    <dl class="space-y-1">
+<section class="hours-default">
+  <div class="hours-default__inner">
+    {block.title && (
+      <header class="hours-default__header">
+        <p class="hours-default__eyebrow">Öffnungszeiten</p>
+        <h2 class="hours-default__title">{block.title}</h2>
+      </header>
+    )}
+    <dl class="hours-default__list">
       {(block.schedule ?? []).map((row) => (
-        <div class="flex justify-between border-b pb-1 text-sm">
-          <dt class="font-medium">{row.day}</dt>
-          <dd class="opacity-80">{row.hours}</dd>
+        <div class="hours-default__row">
+          <dt class="hours-default__day">{row.day}</dt>
+          <dd class="hours-default__hours">{row.hours}</dd>
         </div>
       ))}
     </dl>
   </div>
 </section>
+<style>
+  .hours-default {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    padding-block: var(--space-6);
+    padding-inline: var(--space-5);
+  }
+  .hours-default__inner {
+    max-width: 32rem;
+    margin-inline: auto;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-5);
+  }
+  .hours-default__header {
+    text-align: center;
+    margin-block-end: var(--space-4);
+  }
+  .hours-default__eyebrow {
+    font-size: var(--font-size-small);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2);
+  }
+  .hours-default__title {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h3);
+    line-height: var(--line-height-h3);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+  }
+  .hours-default__list { margin: 0; }
+  .hours-default__row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-3);
+    padding-block: var(--space-3);
+    border-block-end: 1px dashed var(--color-border);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+  }
+  .hours-default__row:last-child { border-block-end: 0; }
+  .hours-default__day {
+    font-weight: var(--font-weight-bold);
+    color: var(--color-fg);
+  }
+  .hours-default__hours {
+    color: var(--color-fg-muted);
+    font-feature-settings: "tnum" 1;
+    margin: 0;
+  }
+</style>

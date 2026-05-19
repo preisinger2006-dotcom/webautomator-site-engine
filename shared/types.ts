@@ -44,11 +44,41 @@ export interface MetaJson {
   principle: 'modern' | 'classic' | 'minimal';
   vertical: string;
   subtype: string;
+  /**
+   * Canonical token contract — must match the CSS-variable contract emitted
+   * by tokensToCssVars in shared/load-customer.ts (the SOURCE OF TRUTH).
+   * The Webcreator worker's mapDesignTokens adapter (apps/worker/src/jobs/
+   * generate-pipeline.ts) writes this exact shape. Older meta.json that
+   * predates this shape is still accepted at runtime via per-field
+   * defensive defaults in tokensToCssVars.
+   */
   design_tokens: {
-    colors: Record<string, string>;
-    typography: { primary: string; secondary?: string; mono?: string };
-    spacing: Record<string, string>;
-    radius: Record<string, string>;
+    colors: {
+      bg: string;
+      surface: string;
+      fg: string;
+      fg_muted: string;
+      primary: string;
+      accent: string;
+      border: string;
+    };
+    typography: {
+      primary: string;
+      secondary: string | null;
+      scale: { h1: string; h2: string; h3: string; h4: string; body: string; small: string };
+      line_heights: { h1: string; h2: string; h3: string; body: string };
+      font_weight_regular: number;
+      font_weight_bold: number;
+    };
+    spacing: number[];
+    radius: { sm: string; md: string; lg: string; full: string };
+    shadows: { sm: string; md: string; lg: string };
+    component_tokens: {
+      button_primary: string;
+      button_secondary: string;
+      card: string;
+      nav: string;
+    };
   };
   updated_at: string;
 }

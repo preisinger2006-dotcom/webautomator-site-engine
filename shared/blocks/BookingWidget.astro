@@ -18,11 +18,78 @@ const PROVIDER_TEMPLATES: Record<string, string | null> = {
 const tpl = block.embed_code ?? PROVIDER_TEMPLATES[block.provider] ?? null;
 const html = tpl ? tpl.replace(/{merchant_id}/g, encodeURIComponent(block.merchant_id)) : '';
 ---
-<section class="py-16 px-6">
-  <div class="max-w-4xl mx-auto">
-    <h2 class="sr-only">Termin buchen</h2>
-    {html ? <Fragment set:html={html} /> : (
-      <p class="text-center opacity-70">Buchung über {block.provider} — Konfiguration unvollständig.</p>
-    )}
+<section class="booking-default">
+  <div class="booking-default__inner">
+    <header class="booking-default__header">
+      <p class="booking-default__eyebrow">Reservierung</p>
+      <h2 class="booking-default__title">Termin buchen</h2>
+      <span class="booking-default__rule" aria-hidden="true"></span>
+    </header>
+    <div class="booking-default__frame">
+      {html ? <Fragment set:html={html} /> : (
+        <p class="booking-default__placeholder">Buchung über {block.provider} — Konfiguration unvollständig.</p>
+      )}
+    </div>
   </div>
 </section>
+<style>
+  .booking-default {
+    background: var(--color-surface);
+    color: var(--color-fg);
+    padding-block: var(--space-7);
+    padding-inline: var(--space-5);
+  }
+  .booking-default__inner {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+  .booking-default__header {
+    text-align: center;
+    margin-block-end: var(--space-6);
+  }
+  .booking-default__eyebrow {
+    font-size: var(--font-size-small);
+    color: var(--color-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: var(--font-weight-bold);
+    margin: 0 0 var(--space-2);
+  }
+  .booking-default__title {
+    font-family: var(--font-secondary, var(--font-primary));
+    font-size: var(--font-size-h2);
+    line-height: var(--line-height-h2);
+    font-weight: var(--font-weight-bold);
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .booking-default__rule {
+    display: block;
+    width: var(--space-5);
+    height: 2px;
+    background: var(--color-accent);
+    margin: var(--space-3) auto 0;
+  }
+  .booking-default__frame {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-4);
+    overflow: hidden;
+  }
+  .booking-default__frame :global(iframe) {
+    width: 100%;
+    border: 0;
+    border-radius: var(--radius-sm);
+    display: block;
+  }
+  .booking-default__placeholder {
+    text-align: center;
+    color: var(--color-fg-muted);
+    font-size: var(--font-size-body);
+    line-height: var(--line-height-body);
+    padding: var(--space-5);
+    margin: 0;
+  }
+</style>
