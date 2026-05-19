@@ -1,6 +1,13 @@
 ---
 /**
- * Override-first block resolution (v0.4.0).
+ * Override-first block resolution (v0.4.1).
+ *
+ * v0.4.1: every block — override OR engine default — is wrapped in a uniform
+ * `<section class="block-{type-kebab}">`. theme.css (Step 9a) is generated
+ * against this contract ("style only .block-* sections"); before 0.4.1 only
+ * override components carried the class, so theme selectors missed
+ * engine-default blocks and collided with the real markup, destroying the
+ * layout (Eckbeisl minimal, 2026-05-19).
  *
  * For each block, render the per-customer override at
  * `customers/{slug}/overrides/blocks/{Pascal}.astro` if one exists for this
@@ -71,6 +78,13 @@ const Component =
   (overrideByPascal[pascalCase(block.type)] as
     | ((_: unknown) => unknown)
     | undefined) ?? (ENGINE_DEFAULTS[block.type] as ((_: unknown) => unknown) | undefined);
+
+// Uniform, theme-stable hook on EVERY block (override or default).
+const blockClass = `block-${String(block.type).replace(/_/g, '-')}`;
 ---
 
-{Component && <Component block={block} assets={assets} />}
+{Component && (
+  <section class={blockClass} data-block={block.type}>
+    <Component block={block} assets={assets} />
+  </section>
+)}

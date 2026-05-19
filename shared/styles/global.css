@@ -18,3 +18,15 @@
 @source "../**/*.astro";
 @source "../../templates/**/*.astro";
 @source "../../templates/**/*.ts";
+
+/*
+ * Engine self-defense (v0.4.1). Low-priority @layer base so an intentional
+ * theme.css (loaded after, outside any layer) still wins — but the shell
+ * stays usable if a theme is silent or rejected. Pairs with the Step-9a
+ * layout-safety gate that forbids a theme from making the shell fixed.
+ */
+@layer base {
+  header { background-color: var(--color-bg, #ffffff); }
+  main > section[class^="block-"],
+  main > section[class*=" block-"] { scroll-margin-top: 2rem; }
+}

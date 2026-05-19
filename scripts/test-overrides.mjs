@@ -1,11 +1,20 @@
 #!/usr/bin/env node
 /**
- * v0.4.0 override-consumption test (spec §15.3) — a REAL `astro build`, no
- * mocks. Proves the three contract guarantees against the _fixture customer:
+ * v0.4.1 override-consumption + layout-contract test — a REAL `astro build`,
+ * no mocks. Proves, against the _fixture customer:
  *
  *   1. override absent  → engine default renders, no theme.css <link>
  *   2. override present  → override markup renders AND theme.css is linked
  *   3. malformed theme.css → build still succeeds (never crashes)
+ *   4. EVERY block (override AND engine default) is wrapped in
+ *      <section class="block-{type}"> — the theme.css selector contract
+ *   5. a hostile theme (position:fixed header) cannot orphan content away:
+ *      the build still succeeds and all block sections remain present
+ *
+ * NOTE: pixel-level overlap detection needs a headless browser; that full
+ * visual-diff gate is a documented follow-up. (4)+(5) assert the structural
+ * contract that, with the Step-9a layout-safety gate, prevents the
+ * destroyed-layout class of failure (Eckbeisl minimal, 2026-05-19).
  *
  * Temp override files are written under customers/_fixture/overrides|assets
  * and removed in a finally block so the repo stays clean.
@@ -87,7 +96,36 @@ try {
   writeFileSync(ASSET_THEME, '}}}{{ this is not css <script> @@@');
   assert(build() === 0, 'build still succeeds with malformed theme.css');
 
-  console.log('\nALL OVERRIDE-CONSUMPTION CHECKS PASSED');
+  // (4) v0.4.1 contract: EVERY block is wrapped in <section class="block-*">,
+  //     including ENGINE-DEFAULT blocks (no override / no theme present).
+  cleanup();
+  assert(build() === 0, 'clean build for wrapper-contract check');
+  html = readFileSync(INDEX, 'utf-8');
+  assert(
+    /<section class="block-hero"/.test(html),
+    'engine-default hero is wrapped in <section class="block-hero">',
+  );
+  assert(
+    /<section class="block-about-section"/.test(html),
+    'engine-default about_section is wrapped in <section class="block-about-section">',
+  );
+
+  // (5) hostile theme (fixed transparent header — the exact shipped bug):
+  //     build still succeeds and NO content section is orphaned away.
+  mkdirSync(resolve(FIX, 'assets'), { recursive: true });
+  mkdirSync(resolve(FIX, 'overrides'), { recursive: true });
+  const hostile = 'header{position:fixed;top:0;left:0;right:0;background:transparent}';
+  writeFileSync(OV_THEME, hostile);
+  writeFileSync(ASSET_THEME, hostile);
+  assert(build() === 0, 'build succeeds even with a hostile fixed-header theme');
+  html = readFileSync(INDEX, 'utf-8');
+  assert(
+    /<section class="block-hero"/.test(html) &&
+      /<section class="block-about-section"/.test(html),
+    'content sections still present under a hostile theme (not orphaned away)',
+  );
+
+  console.log('\nALL OVERRIDE-CONSUMPTION + LAYOUT-CONTRACT CHECKS PASSED');
 } finally {
   cleanup();
 }

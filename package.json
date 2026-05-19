@@ -1,6 +1,6 @@
 {
   "name": "@webautomator/site-engine",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "type": "module",
   "description": "Shared Astro engine (templates + shared blocks + build scripts) used by every WebAutomator customer-site repo.",
   "packageManager": "pnpm@10.33.4",
